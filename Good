@@ -1,0 +1,281 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GodQuest: Light vs Darkness</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #10142f;
+      color: white;
+      text-align: center;
+    }
+
+    .screen {
+      display: none;
+      padding: 30px 15px;
+      min-height: 100vh;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .box {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 25px;
+      background: #1d2347;
+      border-radius: 25px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin: 8px;
+      background: #765cff;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #927dff;
+    }
+
+    input {
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      width: 80%;
+      max-width: 350px;
+      font-size: 17px;
+    }
+
+    .heroes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    .hero {
+      background: #282f5b;
+      padding: 20px;
+      border-radius: 18px;
+      cursor: pointer;
+    }
+
+    .hero.selected {
+      outline: 4px solid #9b8cff;
+    }
+
+    .hero-icon {
+      font-size: 60px;
+    }
+
+    .battle-icon {
+      font-size: 100px;
+    }
+
+    .health {
+      height: 20px;
+      background: #333957;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 10px 0 20px;
+    }
+
+    .health-bar {
+      height: 100%;
+      background: #55dc8a;
+      width: 100%;
+    }
+
+    .enemy-bar {
+      background: #ff596d;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .answer {
+      background: #29315d;
+    }
+
+    .correct {
+      background: #16864d !important;
+    }
+
+    .wrong {
+      background: #9d3040 !important;
+    }
+
+    .stats {
+      font-size: 18px;
+      margin: 15px;
+    }
+
+    @media(max-width:600px) {
+      .heroes,
+      .answers {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="login" class="screen active">
+  <div class="box">
+    <h1>✝️ GodQuest</h1>
+    <h2>Light vs Darkness</h2>
+
+    <p>
+      Choose a biblical hero and use wisdom to defeat the darkness.
+    </p>
+
+    <input id="playerName" placeholder="Enter your name">
+
+    <br>
+
+    <button onclick="enterGame()">
+      Enter GodQuest
+    </button>
+  </div>
+</div>
+
+
+<!-- HERO SELECTION -->
+
+<div id="lobby" class="screen">
+
+  <h1>Choose Your Hero</h1>
+
+  <p id="welcome"></p>
+
+  <div class="stats">
+    ⭐ XP: <span id="xp">0</span>
+    &nbsp;&nbsp;
+    🪙 Coins: <span id="coins">100</span>
+  </div>
+
+  <div id="heroes" class="heroes"></div>
+
+  <br>
+
+  <button onclick="startBattle()">
+    ⚔️ START BATTLE
+  </button>
+
+</div>
+
+
+<!-- BATTLE -->
+
+<div id="battle" class="screen">
+
+  <h1>⚔️ LIGHT VS DARKNESS</h1>
+
+  <div class="box">
+
+    <h2 id="enemyName">Shadow Demon</h2>
+
+    <div id="enemyIcon" class="battle-icon">
+      👿
+    </div>
+
+    <p>Enemy Health</p>
+
+    <div class="health">
+      <div id="enemyHealth" class="health-bar enemy-bar"></div>
+    </div>
+
+    <hr>
+
+    <div id="heroIcon" class="battle-icon">
+      ✝️
+    </div>
+
+    <h3 id="heroName"></h3>
+
+    <p>Your Health</p>
+
+    <div class="health">
+      <div id="playerHealth" class="health-bar"></div>
+    </div>
+
+  </div>
+
+
+  <div class="box">
+
+    <p>
+      Question <span id="questionNumber">1</span>/5
+    </p>
+
+    <h2 id="question"></h2>
+
+    <div id="answers" class="answers"></div>
+
+    <h3 id="feedback"></h3>
+
+  </div>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div id="result" class="screen">
+
+  <div class="box">
+
+    <div style="font-size:100px;">
+      🏆
+    </div>
+
+    <h1 id="resultTitle"></h1>
+
+    <p id="resultText"></p>
+
+    <button onclick="showLobby()">
+      🔄 Play Again
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const heroes = [
+
+  {
+    name: "Jesus Christ",
+    icon: "✝️",
+    power: "Divine Light"
+  },
+
+  {
+    name: "David",
+    icon: "🏹",
+    power: "Giant Slayer"
+  },
+
+  {
+    name: "Moses
+```
