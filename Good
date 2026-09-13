@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +6,10 @@
   <title>GodQuest: Light vs Darkness</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -43,6 +46,7 @@
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.3s;
     }
 
     button:hover {
@@ -71,10 +75,16 @@
       padding: 20px;
       border-radius: 18px;
       cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .hero:hover {
+      background: #323968;
     }
 
     .hero.selected {
       outline: 4px solid #9b8cff;
+      background: #3a4280;
     }
 
     .hero-icon {
@@ -97,6 +107,7 @@
       height: 100%;
       background: #55dc8a;
       width: 100%;
+      transition: width 0.3s;
     }
 
     .enemy-bar {
@@ -110,6 +121,15 @@
 
     .answer {
       background: #29315d;
+      padding: 15px;
+      margin: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .answer:hover {
+      background: #343d7a;
     }
 
     .correct {
@@ -125,10 +145,142 @@
       margin: 15px;
     }
 
+    /* CHAT STYLES */
+    .chat-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #282f5b;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      text-align: left;
+      background: #1d2347;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      word-wrap: break-word;
+      animation: slideIn 0.3s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .player-msg {
+      background: #765cff;
+      margin-left: 30px;
+      text-align: right;
+    }
+
+    .npc-msg {
+      background: #ff596d;
+      margin-right: 30px;
+    }
+
+    .system-msg {
+      background: #55dc8a;
+      color: #10142f;
+      font-weight: bold;
+      margin: 0 30px;
+      text-align: center;
+    }
+
+    .global-msg {
+      background: #927dff;
+      margin: 5px 0;
+      padding: 8px 12px;
+    }
+
+    .global-msg-sender {
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .chat-input-area {
+      padding: 15px;
+      background: #282f5b;
+      border-radius: 0 0 15px 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      width: auto;
+      max-width: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .chat-input-area button {
+      padding: 10px 20px;
+      margin: 0;
+    }
+
+    .npc-dialogue {
+      font-size: 18px;
+      font-style: italic;
+      margin: 15px 0;
+      padding: 15px;
+      background: #282f5b;
+      border-left: 4px solid #ff596d;
+      border-radius: 8px;
+    }
+
+    .hero-dialogue {
+      font-size: 16px;
+      margin: 15px 0;
+      padding: 15px;
+      background: #282f5b;
+      border-left: 4px solid #765cff;
+      border-radius: 8px;
+    }
+
+    .chat-tab-buttons {
+      display: flex;
+      gap: 10px;
+      max-width: 600px;
+      margin: 15px auto;
+      justify-content: center;
+    }
+
+    .chat-tab-buttons button {
+      flex: 1;
+      padding: 10px 15px;
+      margin: 0;
+    }
+
+    .chat-tab-buttons button.active {
+      background: #16864d;
+    }
+
     @media(max-width:600px) {
       .heroes,
       .answers {
         grid-template-columns: 1fr;
+      }
+
+      .chat-message {
+        margin-left: 10px !important;
+        margin-right: 10px !important;
       }
     }
   </style>
@@ -137,145 +289,500 @@
 <body>
 
 <!-- LOGIN -->
-
 <div id="login" class="screen active">
   <div class="box">
     <h1>✝️ GodQuest</h1>
     <h2>Light vs Darkness</h2>
-
-    <p>
-      Choose a biblical hero and use wisdom to defeat the darkness.
-    </p>
-
+    <p>Choose a biblical hero and use wisdom to defeat the darkness.</p>
     <input id="playerName" placeholder="Enter your name">
-
     <br>
-
-    <button onclick="enterGame()">
-      Enter GodQuest
-    </button>
+    <button onclick="enterGame()">Enter GodQuest</button>
   </div>
 </div>
 
+<!-- GLOBAL CHAT ROOM -->
+<div id="chatRoom" class="screen">
+  <div class="box">
+    <h1>💬 Global Chat</h1>
+    <p>Talk with other players before battle</p>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-messages" id="globalChatMessages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="globalChatInput" placeholder="Type a message...">
+      <button onclick="sendGlobalMessage()">Send</button>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top: 20px;">
+    <button onclick="showLobby()">Back to Lobby</button>
+  </div>
+</div>
 
 <!-- HERO SELECTION -->
-
 <div id="lobby" class="screen">
-
   <h1>Choose Your Hero</h1>
-
   <p id="welcome"></p>
 
   <div class="stats">
-    ⭐ XP: <span id="xp">0</span>
-    &nbsp;&nbsp;
-    🪙 Coins: <span id="coins">100</span>
+    ⭐ XP: <span id="xp">0</span> &nbsp;&nbsp; 🪙 Coins: <span id="coins">100</span>
   </div>
 
   <div id="heroes" class="heroes"></div>
 
   <br>
 
-  <button onclick="startBattle()">
-    ⚔️ START BATTLE
-  </button>
-
+  <button onclick="startBattle()">⚔️ START BATTLE</button>
+  <button onclick="showChatRoom()">💬 Global Chat</button>
 </div>
 
-
 <!-- BATTLE -->
-
 <div id="battle" class="screen">
-
   <h1>⚔️ LIGHT VS DARKNESS</h1>
 
-  <div class="box">
+  <!-- Chat Tab Selection -->
+  <div class="chat-tab-buttons">
+    <button class="active" onclick="switchChatTab('battle')">Battle Chat</button>
+    <button onclick="switchChatTab('npc')">Enemy Dialogue</button>
+  </div>
 
-    <h2 id="enemyName">Shadow Demon</h2>
-
-    <div id="enemyIcon" class="battle-icon">
-      👿
+  <!-- Battle In-Game Chat -->
+  <div id="battleChatTab" class="chat-container" style="display: block; margin-bottom: 20px;">
+    <div class="chat-messages" id="battleChatMessages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="battleChatInput" placeholder="Send a message...">
+      <button onclick="sendBattleMessage()">Send</button>
     </div>
+  </div>
 
+  <!-- NPC Dialogue Tab -->
+  <div id="npcDialogueTab" class="chat-container" style="display: none; margin-bottom: 20px;">
+    <div class="chat-messages" id="npcDialogueMessages"></div>
+  </div>
+
+  <div class="box">
+    <h2 id="enemyName">Shadow Demon</h2>
+    <div id="enemyIcon" class="battle-icon">👿</div>
     <p>Enemy Health</p>
-
     <div class="health">
       <div id="enemyHealth" class="health-bar enemy-bar"></div>
     </div>
 
     <hr>
 
-    <div id="heroIcon" class="battle-icon">
-      ✝️
-    </div>
-
+    <div id="heroIcon" class="battle-icon">✝️</div>
     <h3 id="heroName"></h3>
-
     <p>Your Health</p>
-
     <div class="health">
       <div id="playerHealth" class="health-bar"></div>
     </div>
-
   </div>
-
 
   <div class="box">
-
-    <p>
-      Question <span id="questionNumber">1</span>/5
-    </p>
-
+    <p>Question <span id="questionNumber">1</span>/5</p>
     <h2 id="question"></h2>
-
     <div id="answers" class="answers"></div>
-
     <h3 id="feedback"></h3>
-
   </div>
-
 </div>
-
 
 <!-- RESULT -->
-
 <div id="result" class="screen">
-
   <div class="box">
-
-    <div style="font-size:100px;">
-      🏆
-    </div>
-
+    <div style="font-size:100px;">🏆</div>
     <h1 id="resultTitle"></h1>
-
     <p id="resultText"></p>
-
-    <button onclick="showLobby()">
-      🔄 Play Again
-    </button>
-
+    <button onclick="showLobby()">🔄 Play Again</button>
+    <button onclick="showChatRoom()">💬 Global Chat</button>
   </div>
-
 </div>
-
 
 <script>
 
+// HEROES DATA
 const heroes = [
-
   {
     name: "Jesus Christ",
     icon: "✝️",
-    power: "Divine Light"
+    power: "Divine Light",
+    dialogues: [
+      "The light shall guide me!",
+      "Faith is my strength!",
+      "Turn to wisdom, not darkness!"
+    ]
   },
-
   {
     name: "David",
     icon: "🏹",
-    power: "Giant Slayer"
+    power: "Giant Slayer",
+    dialogues: [
+      "One stone, true aim!",
+      "Courage beats size!",
+      "I am not afraid!"
+    ]
   },
-
   {
-    name: "Moses
-```
+    name: "Moses",
+    icon: "🪨",
+    power: "Parting the Seas",
+    dialogues: [
+      "Let my people go!",
+      "The law guides me!",
+      "Miracles await!"
+    ]
+  },
+  {
+    name: "Samson",
+    icon: "💪",
+    power: "Unmatched Strength",
+    dialogues: [
+      "My strength is unbreakable!",
+      "Fear me not, demon!",
+      "I shall prevail!"
+    ]
+  }
+];
+
+// ENEMIES DATA
+const enemies = [
+  {
+    name: "Shadow Demon",
+    icon: "👿",
+    dialogues: [
+      "Your faith cannot stop me!",
+      "Darkness is eternal!",
+      "You will fall like all others!"
+    ]
+  },
+  {
+    name: "Beast of Despair",
+    icon: "🐉",
+    dialogues: [
+      "Surrender to your fears!",
+      "Hope is an illusion!",
+      "I feed on your doubts!"
+    ]
+  },
+  {
+    name: "Chaos Entity",
+    icon: "👹",
+    dialogues: [
+      "Order crumbles before me!",
+      "Everything ends in chaos!",
+      "Your beliefs are meaningless!"
+    ]
+  }
+];
+
+// QUESTIONS
+const questions = [
+  {
+    question: "What is the greatest commandment?",
+    answers: ["Love God and Love Your Neighbor", "Obey the Law", "Seek Wealth", "Fear the Unknown"],
+    correct: 0
+  },
+  {
+    question: "Who led the Israelites out of Egypt?",
+    answers: ["Moses", "Joshua", "Samson", "David"],
+    correct: 0
+  },
+  {
+    question: "What defeated Goliath?",
+    answers: ["A Sword", "A Slingshot", "Magic", "Trickery"],
+    correct: 1
+  },
+  {
+    question: "What is a fruit of the Spirit?",
+    answers: ["Love", "Hatred", "Greed", "Vengeance"],
+    correct: 0
+  },
+  {
+    question: "What did Samson's strength come from?",
+    answers: ["His Hair", "His Training", "His Wealth", "His Wisdom"],
+    correct: 0
+  }
+];
+
+// GAME STATE
+let playerName = "";
+let selectedHero = null;
+let currentEnemy = null;
+let currentQuestion = 0;
+let playerHealth = 100;
+let enemyHealth = 100;
+let playerXP = 0;
+let playerCoins = 100;
+let currentBattle = null;
+let currentChatTab = 'battle';
+let globalChatMessages = [];
+let battleChatMessages = [];
+let npcDialogueMessages = [];
+
+// SCREEN NAVIGATION
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function enterGame() {
+  playerName = document.getElementById('playerName').value.trim();
+  if (!playerName) {
+    alert('Please enter your name!');
+    return;
+  }
+  showLobby();
+}
+
+function showLobby() {
+  showScreen('lobby');
+  document.getElementById('welcome').innerText = `Welcome, ${playerName}!`;
+  document.getElementById('xp').innerText = playerXP;
+  document.getElementById('coins').innerText = playerCoins;
+  renderHeroes();
+}
+
+function showChatRoom() {
+  showScreen('chatRoom');
+  renderGlobalChat();
+}
+
+// HERO RENDERING
+function renderHeroes() {
+  const heroesDiv = document.getElementById('heroes');
+  heroesDiv.innerHTML = '';
+  
+  heroes.forEach((hero, idx) => {
+    const heroCard = document.createElement('div');
+    heroCard.className = 'hero' + (selectedHero?.name === hero.name ? ' selected' : '');
+    heroCard.onclick = () => selectHero(idx);
+    heroCard.innerHTML = `
+      <div class="hero-icon">${hero.icon}</div>
+      <h3>${hero.name}</h3>
+      <p>${hero.power}</p>
+    `;
+    heroesDiv.appendChild(heroCard);
+  });
+}
+
+function selectHero(idx) {
+  selectedHero = heroes[idx];
+  renderHeroes();
+}
+
+// BATTLE SYSTEM
+function startBattle() {
+  if (!selectedHero) {
+    alert('Please select a hero!');
+    return;
+  }
+
+  currentQuestion = 0;
+  playerHealth = 100;
+  enemyHealth = 100;
+  currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+  battleChatMessages = [];
+  npcDialogueMessages = [];
+
+  // Initial dialogue
+  addNPCDialogue(`${currentEnemy.name}: ${currentEnemy.dialogues[0]}`);
+  addNPCDialogue(`${selectedHero.name}: ${selectedHero.dialogues[0]}`);
+
+  showScreen('battle');
+  currentChatTab = 'battle';
+  switchChatTab('battle');
+  renderBattle();
+}
+
+function renderBattle() {
+  document.getElementById('heroName').innerText = selectedHero.name;
+  document.getElementById('heroIcon').innerText = selectedHero.icon;
+  document.getElementById('enemyName').innerText = currentEnemy.name;
+  document.getElementById('enemyIcon').innerText = currentEnemy.icon;
+  document.getElementById('questionNumber').innerText = currentQuestion + 1;
+  document.getElementById('playerHealth').style.width = playerHealth + '%';
+  document.getElementById('enemyHealth').style.width = enemyHealth + '%';
+
+  renderQuestion();
+  renderBattleChat();
+  renderNPCDialogue();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('question').innerText = q.question;
+  document.getElementById('feedback').innerText = '';
+
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
+  
+  q.answers.forEach((answer, idx) => {
+    const ansBtn = document.createElement('button');
+    ansBtn.className = 'answer';
+    ansBtn.innerText = answer;
+    ansBtn.onclick = () => answerQuestion(idx);
+    answersDiv.appendChild(ansBtn);
+  });
+}
+
+function answerQuestion(answerIdx) {
+  const q = questions[currentQuestion];
+  const isCorrect = answerIdx === q.correct;
+
+  // Update UI
+  const answers = document.querySelectorAll('.answer');
+  answers.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.correct) {
+      btn.classList.add('correct');
+    }
+    if (idx === answerIdx && !isCorrect) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  if (isCorrect) {
+    enemyHealth -= 20;
+    addBattleMessage(`${selectedHero.name} answered correctly! Enemy takes damage!`);
+    addNPCDialogue(`${selectedHero.name}: ${selectedHero.dialogues[Math.floor(Math.random() * selectedHero.dialogues.length)]}`);
+    document.getElementById('feedback').innerText = '✅ Correct!';
+  } else {
+    playerHealth -= 15;
+    addBattleMessage(`Wrong answer! ${currentEnemy.name} strikes!`);
+    addNPCDialogue(`${currentEnemy.name}: ${currentEnemy.dialogues[Math.floor(Math.random() * currentEnemy.dialogues.length)]}`);
+    document.getElementById('feedback').innerText = '❌ Wrong!';
+  }
+
+  renderBattle();
+
+  setTimeout(() => {
+    if (playerHealth <= 0) {
+      endBattle(false);
+    } else if (enemyHealth <= 0) {
+      endBattle(true);
+    } else {
+      currentQuestion++;
+      renderBattle();
+    }
+  }, 2000);
+}
+
+function endBattle(won) {
+  if (won) {
+    playerXP += 50;
+    playerCoins += 25;
+    document.getElementById('resultTitle').innerText = '🎉 VICTORY!';
+    document.getElementById('resultText').innerText = `You defeated the ${currentEnemy.name}! +50 XP, +25 Coins`;
+  } else {
+    document.getElementById('resultTitle').innerText = '💀 DEFEAT!';
+    document.getElementById('resultText').innerText = `The ${currentEnemy.name} was too strong. Try again!`;
+  }
+  showScreen('result');
+}
+
+// CHAT FUNCTIONS
+function switchChatTab(tab) {
+  currentChatTab = tab;
+  document.querySelectorAll('.chat-tab-buttons button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  if (tab === 'battle') {
+    document.getElementById('battleChatTab').style.display = 'flex';
+    document.getElementById('npcDialogueTab').style.display = 'none';
+    renderBattleChat();
+  } else {
+    document.getElementById('battleChatTab').style.display = 'none';
+    document.getElementById('npcDialogueTab').style.display = 'flex';
+    renderNPCDialogue();
+  }
+}
+
+function addBattleMessage(msg) {
+  battleChatMessages.push({ type: 'system', text: msg });
+  if (battleChatMessages.length > 20) battleChatMessages.shift();
+  renderBattleChat();
+}
+
+function addNPCDialogue(dialogue) {
+  npcDialogueMessages.push(dialogue);
+  if (npcDialogueMessages.length > 15) npcDialogueMessages.shift();
+  renderNPCDialogue();
+}
+
+function sendBattleMessage() {
+  const input = document.getElementById('battleChatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  battleChatMessages.push({ type: 'player', text: msg, sender: playerName });
+  input.value = '';
+  
+  // Simulate enemy response
+  setTimeout(() => {
+    const responses = ["...", "Hmph!", "Never!", "You won't win!", "Foolish mortal!"];
+    battleChatMessages.push({ type: 'npc', text: responses[Math.floor(Math.random() * responses.length)], sender: currentEnemy.name });
+    renderBattleChat();
+  }, 800);
+
+  renderBattleChat();
+}
+
+function renderBattleChat() {
+  const container = document.getElementById('battleChatMessages');
+  container.innerHTML = '';
+  
+  battleChatMessages.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = `chat-message ${msg.type === 'player' ? 'player-msg' : msg.type === 'npc' ? 'npc-msg' : 'system-msg'}`;
+    div.innerHTML = msg.type === 'system' ? msg.text : `<strong>${msg.sender}:</strong> ${msg.text}`;
+    container.appendChild(div);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderNPCDialogue() {
+  const container = document.getElementById('npcDialogueMessages');
+  container.innerHTML = '';
+  
+  npcDialogueMessages.forEach(dialogue => {
+    const div = document.createElement('div');
+    const isEnemy = dialogue.includes(':') ? dialogue.split(':')[0] === currentEnemy.name : false;
+    div.className = isEnemy ? 'npc-msg' : 'hero-dialogue';
+    div.innerHTML = `<strong>${dialogue}</strong>`;
+    container.appendChild(div);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendGlobalMessage() {
+  const input = document.getElementById('globalChatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  globalChatMessages.push({ sender: playerName, text: msg, timestamp: new Date().toLocaleTimeString() });
+  input.value = '';
+  renderGlobalChat();
+}
+
+function renderGlobalChat() {
+  const container = document.getElementById('globalChatMessages');
+  container.innerHTML = '';
+  
+  globalChatMessages.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'chat-message global-msg';
+    div.innerHTML = `<span class="global-msg-sender">${msg.sender}</span> (${msg.timestamp}): ${msg.text}`;
+    container.appendChild(div);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+// INITIALIZATION
+window.onload = () => {
+  console.log('GodQuest Loaded with Chat Features!');
+};
+
+</script>
+
+</body>
+</html>
