@@ -683,8 +683,16 @@ function endBattle(won) {
 // CHAT FUNCTIONS
 function switchChatTab(tab) {
   currentChatTab = tab;
-  document.querySelectorAll('.chat-tab-buttons button').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  const buttons = document.querySelectorAll('.chat-tab-buttons button');
+  buttons.forEach((b, idx) => {
+    if (tab === 'battle' && idx === 0) {
+      b.classList.add('active');
+    } else if (tab === 'npc' && idx === 1) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
 
   if (tab === 'battle') {
     document.getElementById('battleChatTab').style.display = 'flex';
