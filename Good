@@ -343,12 +343,12 @@
 
   <!-- Chat Tab Selection -->
   <div class="chat-tab-buttons">
-    <button class="active" onclick="switchChatTab('battle')">Battle Chat</button>
-    <button onclick="switchChatTab('npc')">Enemy Dialogue</button>
+    <button class="active" onclick="switchChatTab(event, 'battle')">Battle Chat</button>
+    <button onclick="switchChatTab(event, 'npc')">Enemy Dialogue</button>
   </div>
 
   <!-- Battle In-Game Chat -->
-  <div id="battleChatTab" class="chat-container" style="display: block; margin-bottom: 20px;">
+  <div id="battleChatTab" class="chat-container" style="display: flex; margin-bottom: 20px;">
     <div class="chat-messages" id="battleChatMessages"></div>
     <div class="chat-input-area">
       <input type="text" id="battleChatInput" placeholder="Send a message...">
@@ -590,7 +590,7 @@ function startBattle() {
 
   showScreen('battle');
   currentChatTab = 'battle';
-  switchChatTab('battle');
+  switchChatTab(null, 'battle');
   renderBattle();
 }
 
@@ -681,10 +681,15 @@ function endBattle(won) {
 }
 
 // CHAT FUNCTIONS
-function switchChatTab(tab) {
+function switchChatTab(event, tab) {
   currentChatTab = tab;
   document.querySelectorAll('.chat-tab-buttons button').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (event && event.target) {
+    event.target.classList.add('active');
+  } else {
+    // If called without event (from startBattle), set active programmatically
+    document.querySelectorAll('.chat-tab-buttons button')[0].classList.add('active');
+  }
 
   if (tab === 'battle') {
     document.getElementById('battleChatTab').style.display = 'flex';
